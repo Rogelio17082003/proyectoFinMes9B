@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Baja Estudiantil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #007BFF;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .bot:hover {
+            background-color: #0056b3;
+        }
+        .bot:active {
+            transform: scale(0.98);
+        }
+        .bot {
+            margin-bottom: 20px;
+        }
+        .bot{
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #007BFF;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .bot:hover {
+            background-color: #0056b3;
+        }
+        .bot:active {
+            transform: scale(0.98);
+        }
+
+
+
+
+
+        .panel {
+            display: flex;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1200px;
+        }
+        .logo {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo img {
+            max-width: 100%;
+            height: auto;
+        }
+        .formulario, .subir-archivo {
+            flex: 2;
+            padding: 20px;
+        }
+        .formulario form, .subir-archivo form {
+            display: flex;
+            flex-direction: column;
+        }
+        .formulario label, .subir-archivo label {
+            margin-bottom: 5px;
+        }
+        .formulario input, .formulario textarea, .subir-archivo input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .resultados {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+
+<script>
+    function clasificar(event) {
+        event.preventDefault();
+       
+        const Carrera = document.getElementById('Carrera Escogida').value;
+        const Escuela = document.getElementById('Escuela de Origen').value;
+        const Municipio = document.getElementById('Municipio').value;
+        const Estado = document.getElementById('Estado').value;
+        const Sexo = document.getElementById('Sexo').value;
+        const Estado_Civil = document.getElementById('Estado Civil').value;
+        const calFin = document.getElementById('calFin').value;
+
+        
+        
+        
+
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `Carrera=${Carrera}&Escuela=${Escuela}&Municipio=${Municipio}&Estado=${Estado}&Sexo=${Sexo}&Estado_Civil=${Estado_Civil}&calFin=${calFin}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('resultado').innerText = 'Error: ' + data.error;
+            } else {
+                document.getElementById('resultado').innerText = 'El alumno tiene una alta posibilidad: ' + data.categoria;
+            }
+        })
+        .catch(error => {
+            document.getElementById('resultado').innerText = 'Error en la solicitud.';
+            console.error('Error:', error);
+        });
+    }
+
+
+
+
+
+
+
+
+
+</script>
+</head>
+<body>
+    <div class="header">
+        <h1>Sistema de Predicción de Baja de Estudiantes</h1>
+    </div>
+    <div class="buttons">
+        <button onclick="showUnitario()">Predicción Unitaria</button>
+        <button onclick="showGrupal()">Predicción Grupal</button>
+    </div>
+    <div id="panel-unitario" class="panel">
+        <div class="logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFwzwbmqMnLAdscM-YXyngKwgXZ639w0C4KQ&s" alt="Logo de la Empresa">
+        </div>
+        <div class="formulario">
+            <form id="formulario" onsubmit="clasificar(event)">
+                <label for="Carrera Escogida">Carrera Escogida:</label>
+                <input type="text" id="Carrera Escogida" name="Carrera Escogida">
+                
+                <label for="Escuela de Origen">Escuela de Origen:</label>
+                <input type="text" id="Escuela de Origen" name="Escuela de Origen">
+
+                <label for="Municipio">Municipio:</label>
+                <input type="text" id="Municipio" name="Municipio">
+
+                <label for="Estado">Estado:</label>
+                <input type="text" id="Estado" name="Estado">
+
+                <label for="Sexo">Sexo:</label>
+                <input type="text" id="Sexo" name="Sexo">
+
+                <label for="Estado Civil">Estado Civil:</label>
+                <input type="text" id="Estado Civil" name="Estado Civil">
+
+                <label for="calFin">Calificación Final:</label>
+                <input type="text" id="calFin" name="calFin">
+                
+                <input class="bot" type="submit" value="Enviar"> 
+            </form>
+        </div>
+        <div class="resultados">
+            <h2>Resultados</h2>
+            <p id="resultado">Aquí se imprimirá un valor.</p>
+        </div>
+    </div>
+    <div id="panel-grupal" class="panel hidden">
+        <div class="logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFwzwbmqMnLAdscM-YXyngKwgXZ639w0C4KQ&s" alt="Logo de la Empresa">
+        </div>
+        <div class="formulario">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <label for="file">Selecciona un archivo CSV:</label>
+                <input type="file" id="file" name="file" accept=".csv">
+                <button type="submit">Subir y Predecir</button>
+            </form>
+        </div>
+        <div id="resultados" class="resultados">
+            <h2>Resultados</h2>
+            <p>Aquí se mostrarán los resultados de la predicción.</p>
+        </div>
+    
+        <script>
+            document.getElementById('uploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    const resultadosDiv = document.getElementById('resultados');
+                    resultadosDiv.innerHTML = `<h2>Resultados</h2><p>${data.message}</p>`;
+                    alert("hola")
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+        </div>
+    </div>
+    <script>
+        function showUnitario() {
+            document.getElementById('panel-unitario').classList.remove('hidden');
+            document.getElementById('panel-grupal').classList.add('hidden');
+        }
+        function showGrupal() {
+            document.getElementById('panel-unitario').classList.add('hidden');
+            document.getElementById('panel-grupal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
