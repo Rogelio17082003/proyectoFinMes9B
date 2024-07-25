@@ -11,6 +11,9 @@ Werkzeug==3.0.3
 joblib==1.4.2
 pandas==2.2.2
 numpy==2.0.1
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> ddd5c54ae0dfedfe990a4943c09eb006bb1bb5cc
