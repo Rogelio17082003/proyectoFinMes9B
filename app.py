@@ -5,7 +5,7 @@ import logging
 import os
 from sklearn.preprocessing import StandardScaler
 
-app = Flask(__name__)
+app = Flask(__name__) 
 
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
