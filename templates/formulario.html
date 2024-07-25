@@ -145,15 +145,6 @@
             console.error('Error:', error);
         });
     }
-
-
-
-
-
-
-
-
-
 </script>
 </head>
 <body>
@@ -203,35 +194,17 @@
         <div class="logo">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFwzwbmqMnLAdscM-YXyngKwgXZ639w0C4KQ&s" alt="Logo de la Empresa">
         </div>
-        <div class="formulario">
-            <form id="uploadForm" enctype="multipart/form-data">
-                <label for="file">Selecciona un archivo CSV:</label>
-                <input type="file" id="file" name="file" accept=".csv">
-                <button type="submit">Subir y Predecir</button>
+        <div class="subir-archivo">
+            <form>
+                <label for="archivo">Subir Archivo:</label>
+                <input type="file" id="archivo" name="archivo">
+                
+                <button type="submit">Enviar</button>
             </form>
         </div>
-        <div id="resultados" class="resultados">
+        <div class="resultados">
             <h2>Resultados</h2>
-            <p>Aquí se mostrarán los resultados de la predicción.</p>
-        </div>
-    
-        <script>
-            document.getElementById('uploadForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    const resultadosDiv = document.getElementById('resultados');
-                    resultadosDiv.innerHTML = `<h2>Resultados</h2><p>${data.message}</p>`;
-                    alert("hola")
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        </script>
+            <p>Aquí se imprimirá un valor.</p>
         </div>
     </div>
     <script>

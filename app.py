@@ -4,12 +4,8 @@ import pandas as pd
 import logging
 import os
 from sklearn.preprocessing import StandardScaler
-from flask_cors import CORS  # Importar CORS
 
 app = Flask(__name__)
-
-# Configurar CORS
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # Permitir todos los orígenes
 
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
@@ -20,25 +16,10 @@ scaler = joblib.load('modelo_Scaler.pkl')
 modelRF = joblib.load('modelo_RandomForest.pkl')
 
 app.logger.debug('4 modelos cargados correctamente.')
+
 @app.route('/')
 def home():
     return render_template('formulario.html')
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    try:
-        file = request.files['file']
-        if file and file.filename.endswith('.csv'):
-            df = pd.read_csv(file)
-            # Procesar el DataFrame y realizar la predicción
-            df = df['Sexo']
-            
-            return jsonify({'message': df.to_string(index=False)})  # Devuelve el DataFrame con predicciones
-        return jsonify({'message': 'Archivo no válido'})
-    except Exception as e:
-        return jsonify({'message': f'Error al procesar el archivo: {str(e)}'}), 500
-
-
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -53,13 +34,13 @@ def predict():
         calFin = float(request.form['calFin'])
         
         # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[Carrera, Escuela, Municipio, Estado, Sexo, Estado_Civil, calFin]], 
-                               columns=['Carrera Escogida', 'Escuela de Origen', 'Municipio', 'Estado', 'Sexo', 'Estado Civil', 'calFin'])
+        data_df = pd.DataFrame([[Carrera, Escuela, Municipio, Estado, Sexo, Estado_Civil,calFin]], 
+                               columns=['Carrera Escogida', 'Escuela de Origen', 'Municipio', 'Estado', 'Sexo', 'Estado Civil','calFin'])
         app.logger.debug(f'DataFrame creado: {data_df}')
 
         # Seleccionar las columnas categóricas a convertir a numérico
         categorical_columns = ['Carrera Escogida', 'Escuela de Origen',
-                       'Municipio', 'Estado', 'Sexo', 'Estado Civil', 'calFin']
+                       'Municipio', 'Estado', 'Sexo', 'Estado Civil','calFin']
         # Transformar las columnas categóricas a numérico
         data_df[categorical_columns] = ordinal_encoder.transform(data_df[categorical_columns])
         app.logger.debug(f'Datos transformados a numérico: {data_df}')
@@ -68,6 +49,8 @@ def predict():
         scaler_df = scaler.transform(data_df)
         scaler_df = pd.DataFrame(scaler_df, columns=data_df.columns)
         app.logger.debug(f'DataFrame escalado: {scaler_df}')
+
+        
 
         # Realizar la predicción
         prediction = modelRF.predict(scaler_df)
@@ -81,6 +64,7 @@ def predict():
             category = "Reprovar"
         elif prediction_serializable == 1:
             category = "Pasar"
+       
         else:
             category = "Unknown"
 
@@ -93,4 +77,4 @@ def predict():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, port=port)
+    app.run(debug=True)
